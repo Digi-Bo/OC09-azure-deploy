@@ -1,0 +1,35 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: oc09recommender.azurecr.io
+        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: oc09recommender.azurecr.io/hybridrecommender:latest
+
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: hybridrecommender
+        publish-profile: ${{ secrets.AZURE_CREDENTIALS }}
+        images: oc09recommender.azurecr.io/hybridrecommender:latest
