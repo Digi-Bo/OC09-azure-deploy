@@ -5,12 +5,10 @@
 azure-functions
 azure-storage-blob
 
-streamlit
 pandas
 numpy
 scikit-surprise
 scikit-learn
 protobuf
-altair
 
 requests
